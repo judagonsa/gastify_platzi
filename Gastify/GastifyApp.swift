@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct GastifyApp: App {
     
-    let databaseService: DatabaseServiceProtocol = MockDatabaseService()
+    let databaseService: DatabaseServiceProtocol = SDDatabaseService()
     
     var body: some Scene {
         WindowGroup {

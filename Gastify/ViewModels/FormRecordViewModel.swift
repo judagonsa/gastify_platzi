@@ -86,8 +86,10 @@ class FormRecordViewModel: ObservableObject {
            
             Task {
                 if await self.databaseService.updateRecord(recordToUpdate) {
-                    self.loading = false
-                    completion()
+                    await MainActor.run {
+                        self.loading = false
+                        completion()
+                    }
                 } else {
                     print("Mostrar error al momento de actualizar un record")
                 }
@@ -103,8 +105,10 @@ class FormRecordViewModel: ObservableObject {
             
             Task {
                 if await self.databaseService.saveNewRecord(recordToSave) {
-                    self.loading = false
-                    completion()
+                    await MainActor.run {
+                        self.loading = false
+                        completion()
+                    }
                 } else {
                     print("Mostrar error al momento de guardar un record")
                 }

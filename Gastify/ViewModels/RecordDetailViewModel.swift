@@ -34,8 +34,10 @@ class RecordDetailViewModel: ObservableObject {
         self.loading = true
         Task {
             if await self.databaseService.deleteRecord(record) {
-                self.loading = false
-                completion()
+                await MainActor.run {
+                    self.loading = false
+                    completion()
+                }
             } else {
                 print("mostrar error al momento de eliminar un record")
             }
