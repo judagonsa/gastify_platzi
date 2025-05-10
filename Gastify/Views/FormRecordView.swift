@@ -97,5 +97,5 @@ struct FormRecordView: View {
 }
 
 #Preview {
-    FormRecordView(viewModel: FormRecordViewModel())
+    FormRecordView(viewModel: FormRecordViewModel(databaseService: MockDatabaseService()))
 }

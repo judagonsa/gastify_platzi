@@ -57,7 +57,12 @@ struct RecordDetailView: View {
         .sheet(item: self.$viewModel.sheet) { item in
             switch item {
             case .updateRecord(let record):
-                FormRecordView(viewModel: FormRecordViewModel(record: record))
+                    FormRecordView(
+                        viewModel: FormRecordViewModel(
+                            databaseService: self.viewModel.databaseService,
+                            record: record
+                        )
+                    )
             }
         }
         .navigationTitle("Detalle de registro")
@@ -65,10 +70,14 @@ struct RecordDetailView: View {
 }
 
 #Preview {
-    let record = Record(id: "1",
-                        title: "Preview new record",
-                        date: Date(),
-                        type: .income,
-                        amount: 1000)
-    return RecordDetailView(viewModel: RecordDetailViewModel(record: record))
+    let record = Record(
+        id: "1",
+        title: "Preview new record",
+        date: Date(),
+        type: .income,
+        amount: 1000
+    )
+    return RecordDetailView(
+        viewModel: RecordDetailViewModel(databaseService: MockDatabaseService(), record: record)
+    )
 }

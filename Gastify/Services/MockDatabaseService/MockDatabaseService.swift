@@ -5,7 +5,7 @@
 //  Created by Julian González on 8/05/25.
 //
 
-class MockDatabaseService: DataServiceProtocol {
+class MockDatabaseService: DatabaseServiceProtocol {
     
     let mockRecords = MockRecordsHelper.mockRecords()
     
@@ -13,16 +13,16 @@ class MockDatabaseService: DataServiceProtocol {
         return MockRecordsHelper.applyFilter(to: mockRecords, by: filter)
     }
 
-    func saveNewRecord(record: Record) async -> Bool {
+    func saveNewRecord(_ record: Record) async -> Bool {
         return false
     }
 
-    func updateRecord(record: Record) async -> Bool {
-        return false
+    func updateRecord(_ record: Record) async -> Bool {
+        return true
     }
 
-    func deleteRecord(record: Record) async -> Bool {
-        return false
+    func deleteRecord(_ record: Record) async -> Bool {
+        return true
     }
 
     func getTotals() async -> (income: Double, outCome: Double) {

@@ -19,8 +19,10 @@ class RecordDetailViewModel: ObservableObject {
     @Published var showDeleteAlert = false
 
     let record: Record
+    let databaseService: DatabaseServiceProtocol
 
-    init(record: Record) {
+    init(databaseService: DatabaseServiceProtocol, record: Record) {
+        self.databaseService = databaseService
         self.record = record
     }
 
@@ -30,6 +32,15 @@ class RecordDetailViewModel: ObservableObject {
 
     func deleteRecord(completion: @escaping () -> Void) {
         self.loading = true
+        Task {
+            if await self.databaseService.deleteRecord(record) {
+                self.loading = false
+                completion()
+            } else {
+                print("mostrar error al momento de eliminar un record")
+            }
+        }
+        
         // TODO: Eliminar el registro de la base de datos
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.loading = false

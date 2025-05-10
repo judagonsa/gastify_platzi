@@ -28,8 +28,12 @@ class HomeViewModel: ObservableObject {
     var totalIncome: Double = 0
     var totalOutcome: Double = 0
     let filters: [FilterItem] = [.today, .week, .month, .year]
-    // TODO: Remplazar por BD
-    let mockRecords = MockRecordsHelper.mockRecords()
+    
+    let databaseService: DatabaseServiceProtocol
+    
+    init(databaseService: DatabaseServiceProtocol) {
+        self.databaseService = databaseService
+    }
 
     var totalIncomeText: String {
         return "$\(self.totalIncome.toMoneyAmount())"
@@ -47,20 +51,26 @@ class HomeViewModel: ObservableObject {
     func getTotals() {
         // TODO: - Cambiar esta logica para obtener la data desde un servicio de BD
         self.loadingTotals = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            self.totalIncome = 10000000
-            self.totalOutcome = 500000
-            self.loadingTotals = false
+        Task {
+            let total = await self.databaseService.getTotals()
+            self.totalIncome = total.income
+            self.totalOutcome = total.outCome
+            
+            await MainActor.run {
+                self.loadingTotals = false
+            }
         }
     }
 
     func getRecords() {
         // TODO: - Cambiar esta logica para obtener la data desde un servicio de BD
         self.loading = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.records = MockRecordsHelper.applyFilter(to: self.mockRecords,
-                                                            by: self.activeFilter)
-            self.loading = false
+        Task {
+            self.records = await self.databaseService.fetchRecord(filter: self.activeFilter)
+            
+            await MainActor.run {
+                self.loading = false
+            }
         }
     }
 

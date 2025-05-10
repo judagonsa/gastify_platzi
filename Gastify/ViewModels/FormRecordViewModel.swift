@@ -18,8 +18,10 @@ class FormRecordViewModel: ObservableObject {
     let record: Record?
     private let maxDigits = 10
     private let maxDecimals = 2
+    let databaseService: DatabaseServiceProtocol
 
-    init(record: Record? = nil) {
+    init(databaseService: DatabaseServiceProtocol, record: Record? = nil) {
+        self.databaseService = databaseService
         self.record = record
         self.setUpInfoIfNeeded()
     }
@@ -74,26 +76,38 @@ class FormRecordViewModel: ObservableObject {
         guard let amountDouble = Double(self.amount) else { return }
         self.loading = true
         if let record {
-            let recordToUpdate = Record(id: record.id,
-                                        title: self.title,
-                                        date: record.date,
-                                        type: record.type,
-                                        amount: amountDouble)
-            // TODO: Actualizar record existente en BD
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.loading = false
-                completion()
+            let recordToUpdate = Record(
+                id: record.id,
+                title: self.title,
+                date: record.date,
+                type: record.type,
+                amount: amountDouble
+            )
+           
+            Task {
+                if await self.databaseService.updateRecord(recordToUpdate) {
+                    self.loading = false
+                    completion()
+                } else {
+                    print("Mostrar error al momento de actualizar un record")
+                }
             }
         } else {
-            let recordToSave = Record(id: UUID().uuidString,
-                                      title: self.title,
-                                      date: Date(),
-                                      type: self.selectedType,
-                                      amount: amountDouble)
-            // TODO: Guardar nuevo record en BD
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.loading = false
-                completion()
+            let recordToSave = Record(
+                id: UUID().uuidString,
+                title: self.title,
+                date: Date(),
+                type: self.selectedType,
+                amount: amountDouble
+            )
+            
+            Task {
+                if await self.databaseService.saveNewRecord(recordToSave) {
+                    self.loading = false
+                    completion()
+                } else {
+                    print("Mostrar error al momento de guardar un record")
+                }
             }
         }
     }
