@@ -100,7 +100,21 @@ class SDDatabaseService: DatabaseServiceProtocol {
     }
     
     func updateRecord(_ record: Record) async -> Bool {
-        false
+        
+        let id = record.id
+        let predicate = #Predicate<SDRecord> { $0.recordId == record.id }
+        let descriptor = FetchDescriptor<SDRecord>(predicate: predicate)
+        
+        do {
+            guard let existingRecord = try context.fetch(descriptor).first else { return false }
+            existingRecord.title = record.title
+            existingRecord.amount = record.amount
+            
+            try context.save()
+            return true
+        } catch {
+            return false
+        }
     }
     
     func deleteRecord(_ record: Record) async -> Bool {
