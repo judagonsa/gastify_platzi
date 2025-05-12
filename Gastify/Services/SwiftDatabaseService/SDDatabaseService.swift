@@ -102,7 +102,7 @@ class SDDatabaseService: DatabaseServiceProtocol {
     func updateRecord(_ record: Record) async -> Bool {
         
         let id = record.id
-        let predicate = #Predicate<SDRecord> { $0.recordId == record.id }
+        let predicate = #Predicate<SDRecord> { $0.recordId == id }
         let descriptor = FetchDescriptor<SDRecord>(predicate: predicate)
         
         do {
@@ -118,7 +118,20 @@ class SDDatabaseService: DatabaseServiceProtocol {
     }
     
     func deleteRecord(_ record: Record) async -> Bool {
-        false
+        let id = record.id
+        let predicate = #Predicate<SDRecord> { $0.recordId == id }
+        let descriptor = FetchDescriptor<SDRecord>(predicate: predicate)
+        
+        do {
+            guard let existingRecord = try context.fetch(descriptor).first else { return false }
+            
+            context.delete(existingRecord)
+            
+            try context.save()
+            return true
+        } catch {
+            return false
+        }
     }
     
     func getTotals() async -> (income: Double, outCome: Double) {
