@@ -25,7 +25,7 @@ class MockDatabaseService: DatabaseServiceProtocol {
         return true
     }
 
-    func getTotals() async -> (income: Double, outCome: Double) {
+    func getTotals() async -> (income: Double, outcome: Double) {
         return (0.0 , 0.0)
     }
 }

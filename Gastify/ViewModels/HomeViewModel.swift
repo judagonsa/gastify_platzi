@@ -54,7 +54,7 @@ class HomeViewModel: ObservableObject {
         Task {
             let total = await self.databaseService.getTotals()
             self.totalIncome = total.income
-            self.totalOutcome = total.outCome
+            self.totalOutcome = total.outcome
             
             await MainActor.run {
                 self.loadingTotals = false

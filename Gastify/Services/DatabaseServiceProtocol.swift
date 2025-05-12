@@ -12,5 +12,5 @@ protocol DatabaseServiceProtocol {
     func saveNewRecord(_ record: Record) async -> Bool
     func updateRecord(_ record: Record) async -> Bool
     func deleteRecord(_ record: Record) async -> Bool
-    func getTotals() async -> (income: Double, outCome: Double)
+    func getTotals() async -> (income: Double, outcome: Double)
 }
