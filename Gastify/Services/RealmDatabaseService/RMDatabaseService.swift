@@ -112,7 +112,12 @@ class RMDatabaseService: DatabaseServiceProtocol {
     }
     
     func getTotals() async -> (income: Double, outcome: Double) {
-        return (0, 0)
+        let records = realm.objects(RMRecord.self)
+        
+        let income = records.filter("type == %@",  "INCOME").sum(ofProperty: "amount") as Double
+        let outcome = records.filter("type == %@",  "OUTCOME").sum(ofProperty: "amount") as Double
+        
+        return (income: income, outcome: outcome)   
     }
     
     
