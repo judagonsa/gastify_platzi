@@ -73,7 +73,23 @@ class RMDatabaseService: DatabaseServiceProtocol {
     }
     
     func updateRecord(_ record: Record) async -> Bool {
-        true
+        do {
+            let results = realm.objects(RMRecord.self).where { query in
+                query["recordId"] == record.id
+            }
+            guard let realmRecord = results.first else {
+                return false
+            }
+            
+            try realm.write {
+                realmRecord.title = record.title
+                realmRecord.amount = record.amount
+            }
+            
+            return true
+        } catch {
+            return false
+        }
     }
     
     func deleteRecord(_ record: Record) async -> Bool {
